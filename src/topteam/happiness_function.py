@@ -11,11 +11,25 @@ class HappinessFactor:
         raise NotImplementedError()
 
 
+class TeamsAreFull(HappinessFactor):
+    def __call__(self, teams: list[Team]) -> float:
+        for team in teams:
+            if not team.is_full():
+                return 0.0
+        return 100
+
+
 class DiffByTeamValuesFactor(HappinessFactor):
     def __call__(self, teams: list[Team]) -> float:
+        if sum(self.get_values(teams)) == 0:
+            return 0.0
         score = 1.0
         for x, y in list(itertools.combinations(self.get_values(teams), r=2)):
-            value = 1 / (abs(x - y) * self.weight)
+            diff = abs(x - y)
+            if diff == 0:
+                score += 1.0
+                continue
+            value = 1 / (diff * self.weight)
             score += round(value, 2)
         return score
 

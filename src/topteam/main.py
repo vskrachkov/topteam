@@ -6,13 +6,14 @@ from topteam.happiness_function import (
     DiffByTeamPlayFactor,
     DiffByVisionFactor,
     DiffByMentalityFactor,
-    DiffByTotalRatingFactor,
+    DiffByTotalRatingFactor, TeamsAreFull,
 )
 from topteam.models import Player, Rule
 from topteam.players_repository import PlayersRepository
 from topteam.rules_repository import RulesRepository
 from topteam.team_composition.composer import TeamsComposer
 from topteam.team_composition.strategies import TopPairsStrategy
+from topteam.team_composition.strategies.pick_top_one_by_one import PickTopOneByOneStrategy
 
 players_repository = PlayersRepository()
 players_repository.save(Player('4d654ffe-b901-4cad-afc7-ebeb8cfa06a3', 'Bohdan Sheketa', defense=2, offense=3, team_play=3, physical=2, vision=3, mentality=2))
@@ -73,7 +74,10 @@ def main() -> None:
             "333b89bf-f479-4be6-b3a2-0401815ae678",
         ]
     )
-    strategies = [TopPairsStrategy(players, players_per_team, rules_repository)]
+    strategies = [
+        TopPairsStrategy(players, players_per_team, rules_repository),
+        PickTopOneByOneStrategy(players, players_per_team, rules_repository)
+    ]
     happiness_function = HappinessFunction([
         DiffByDefenseFactor(),
         DiffByOffenseFactor(),
@@ -82,6 +86,7 @@ def main() -> None:
         DiffByVisionFactor(),
         DiffByMentalityFactor(weight=2.0),
         DiffByTotalRatingFactor(),
+        TeamsAreFull(),
     ])
     composer = TeamsComposer(strategies, happiness_function)
     teams = composer.create_teams()

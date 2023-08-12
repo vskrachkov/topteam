@@ -1,5 +1,5 @@
 from .base import TeamsCompositionStrategy
-from .top_pairs_strategy import TopPairsStrategy
+from .top_pairs import TopPairsStrategy
 
 __all__ = [
     "TeamsCompositionStrategy",
