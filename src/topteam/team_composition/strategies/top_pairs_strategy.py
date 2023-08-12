@@ -1,10 +1,9 @@
 import itertools
-from abc import abstractmethod
 from typing import TypeAlias, Callable
 
 from topteam.models import Player, Team, PlayersPair
 from topteam.rules_repository import RulesRepository
-from topteam.team_composition.pair_sorting_strategy import PairSortingStrategy
+from topteam.team_composition.strategies.base import TeamsCompositionStrategy
 
 _TopTier: TypeAlias = list[Player]
 _SeniorTier: TypeAlias = list[Player]
@@ -13,28 +12,7 @@ _TiersTuple: TypeAlias = tuple[_TopTier, _SeniorTier, _MiddleTier]
 _PairScorer: TypeAlias = Callable[[PlayersPair], int]
 
 
-class TeamsCompositionStrategy:
-    def __init__(
-        self,
-        players: list[Player],
-        players_per_team: int,
-        rules_repository: RulesRepository,
-    ) -> None:
-        self.teams_count = len(players) // players_per_team
-        if self.teams_count < 2:
-            raise ValueError("Not enough players to form teams for the match")
-
-        self.players = players
-        self.players_per_team = players_per_team
-        self.rules_repository = rules_repository
-
-    @abstractmethod
-    def create_teams(self):
-        raise NotImplementedError()
-
-
 class TopPairsStrategy(TeamsCompositionStrategy):
-
     def create_teams(self) -> list[Team]:
         top_players, senior_players, middle_players = self.create_player_tiers()
 
@@ -104,3 +82,25 @@ class TopPairsStrategy(TeamsCompositionStrategy):
             used_players.add(pair.first)
             used_players.add(pair.second)
         return unique_pairs
+
+
+class PairSortingStrategy:
+    def __init__(self, rules_repository: RulesRepository) -> None:
+        self.rules_repository = rules_repository
+
+    def __call__(self, pair: PlayersPair) -> int:
+        return (
+            pair.rating()
+            + self.calc_modifier(pair.first, pair.second)
+            + self.calc_modifier(pair.second, pair.first)
+        )
+
+    def calc_modifier(self, player_for: Player, player_with: Player) -> int:
+        result = 0
+        if modifiers_for_first := self.rules_repository.find_rules(
+            player_for
+        ):
+            for m in modifiers_for_first:
+                if m.player.id == player_with:
+                    result += m.value
+        return result

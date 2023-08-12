@@ -1,6 +1,6 @@
 from topteam.happiness_function import HappinessFunction
 from topteam.models import Team
-from topteam.team_composition.teams_composition_strategy import TeamsCompositionStrategy
+from topteam.team_composition.strategies.base import TeamsCompositionStrategy
 
 
 class TeamsComposer:

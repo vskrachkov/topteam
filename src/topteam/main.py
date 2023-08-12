@@ -1,9 +1,18 @@
+from topteam.happiness_function import (
+    HappinessFunction,
+    DiffByDefenseFactor,
+    DiffByOffenseFactor,
+    DiffByPhysicalFactor,
+    DiffByTeamPlayFactor,
+    DiffByVisionFactor,
+    DiffByMentalityFactor,
+    DiffByTotalRatingFactor,
+)
 from topteam.models import Player, Rule
 from topteam.players_repository import PlayersRepository
 from topteam.rules_repository import RulesRepository
 from topteam.team_composition.composer import TeamsComposer
-from topteam.happiness_function import HappinessFactor, HappinessFunction
-from topteam.team_composition.teams_composition_strategy import TopPairsStrategy
+from topteam.team_composition.strategies import TopPairsStrategy
 
 players_repository = PlayersRepository()
 players_repository.save(Player('4d654ffe-b901-4cad-afc7-ebeb8cfa06a3', 'Bohdan Sheketa', defense=2, offense=3, team_play=3, physical=2, vision=3, mentality=2))
@@ -49,25 +58,36 @@ rules_repository.save(players_repository.find_by_id('603cb7f4-6163-467c-98d4-3d1
 
 def main() -> None:
     players_per_team = 5
-    players = players_repository.find_by_ids([
-        "bd427f45-ef20-4325-b24a-5d5a581d7379",
-        "4d654ffe-b901-4cad-afc7-ebeb8cfa06a3",
-        "d021718e-33c0-4712-b4b4-2211d75edf77",
-        "0d206713-915f-4d9f-92e1-8ad9d176a1de",
-        "a2b04543-31b8-4d43-bf75-45f8b21f4eb5",
-        "34542d1c-fb56-40d9-b13f-9cd97dd15ba0",
-        "8caa92a3-fd22-47e0-b798-799b8cb4bea9",
-        "17ee46e2-5dd2-481a-97c7-e539393ebfc7",
-        "00ab89bf-f479-4be6-b3a2-0401815ae678",
-        "113b89bf-f479-4be6-b3a2-0401815ae678",
-        "333b89bf-f479-4be6-b3a2-0401815ae678",
-    ])
+    players = players_repository.find_by_ids(
+        [
+            "bd427f45-ef20-4325-b24a-5d5a581d7379",
+            "4d654ffe-b901-4cad-afc7-ebeb8cfa06a3",
+            "d021718e-33c0-4712-b4b4-2211d75edf77",
+            "0d206713-915f-4d9f-92e1-8ad9d176a1de",
+            "a2b04543-31b8-4d43-bf75-45f8b21f4eb5",
+            "34542d1c-fb56-40d9-b13f-9cd97dd15ba0",
+            "8caa92a3-fd22-47e0-b798-799b8cb4bea9",
+            "17ee46e2-5dd2-481a-97c7-e539393ebfc7",
+            "00ab89bf-f479-4be6-b3a2-0401815ae678",
+            "113b89bf-f479-4be6-b3a2-0401815ae678",
+            "333b89bf-f479-4be6-b3a2-0401815ae678",
+        ]
+    )
     strategies = [TopPairsStrategy(players, players_per_team, rules_repository)]
-    composer = TeamsComposer(strategies, HappinessFunction([HappinessFactor()]))
+    happiness_function = HappinessFunction([
+        DiffByDefenseFactor(),
+        DiffByOffenseFactor(),
+        DiffByPhysicalFactor(weight=2.0),
+        DiffByTeamPlayFactor(weight=1.2),
+        DiffByVisionFactor(),
+        DiffByMentalityFactor(weight=2.0),
+        DiffByTotalRatingFactor(),
+    ])
+    composer = TeamsComposer(strategies, happiness_function)
     teams = composer.create_teams()
     for team in teams:
         print(team)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -1,9 +1,69 @@
+import itertools
+
 from topteam.models import Team
 
 
 class HappinessFactor:
+    def __init__(self, weight: float = 1.0) -> None:
+        self.weight = weight
+
     def __call__(self, teams: list[Team]) -> float:
-        return 1.0
+        raise NotImplementedError()
+
+
+class DiffByTeamValuesFactor(HappinessFactor):
+    def __call__(self, teams: list[Team]) -> float:
+        score = 1.0
+        for x, y in list(itertools.combinations(self.get_values(teams), r=2)):
+            value = 1 / (abs(x - y) * self.weight)
+            score += round(value, 2)
+        return score
+
+    @staticmethod
+    def get_values(teams: list[Team]) -> list[int]:
+        raise NotImplementedError()
+
+
+class DiffByDefenseFactor(DiffByTeamValuesFactor):
+    @staticmethod
+    def get_values(teams: list[Team]) -> list[int]:
+        return [team.defense() for team in teams]
+
+
+class DiffByOffenseFactor(DiffByTeamValuesFactor):
+    @staticmethod
+    def get_values(teams: list[Team]) -> list[int]:
+        return [team.offense() for team in teams]
+
+
+class DiffByPhysicalFactor(DiffByTeamValuesFactor):
+    @staticmethod
+    def get_values(teams: list[Team]) -> list[int]:
+        return [team.physical() for team in teams]
+
+
+class DiffByTeamPlayFactor(DiffByTeamValuesFactor):
+    @staticmethod
+    def get_values(teams: list[Team]) -> list[int]:
+        return [team.team_play() for team in teams]
+
+
+class DiffByVisionFactor(DiffByTeamValuesFactor):
+    @staticmethod
+    def get_values(teams: list[Team]) -> list[int]:
+        return [team.vision() for team in teams]
+
+
+class DiffByMentalityFactor(DiffByTeamValuesFactor):
+    @staticmethod
+    def get_values(teams: list[Team]) -> list[int]:
+        return [team.mentality() for team in teams]
+
+
+class DiffByTotalRatingFactor(DiffByTeamValuesFactor):
+    @staticmethod
+    def get_values(teams: list[Team]) -> list[int]:
+        return [team.rating() for team in teams]
 
 
 class HappinessFunction:
@@ -13,4 +73,6 @@ class HappinessFunction:
         self.happiness_factors = happiness_factors
 
     def calculate_score(self, teams: list[Team]) -> float:
-        return sum([hf(teams) for hf in self.happiness_factors])
+        result = sum([hf(teams) for hf in self.happiness_factors])
+        print(f"happiness: {result}")
+        return result
