@@ -1,0 +1,14 @@
+.idea
+*.iml
+_work
+*.bak
+*.bak.*
+.env
+.coverage
+
+app_version.json
+__pycache__
+data/
+places_cache
+.python-version
+*.sqlite3
