@@ -49,6 +49,13 @@ class TopPairsStrategy(TeamsCompositionStrategy):
 
             pick_top_senior = not pick_top_senior
 
+        # remaining players
+        chosen_players = [p for t in teams for p in t.get_all_players()]
+        remaining_players = [p for p in self.players if p not in chosen_players]
+        for team in teams:
+            while remaining_players:
+                team.add_player(remaining_players.pop(0))
+
         return teams
 
     def create_player_tiers(self) -> _TiersTuple:

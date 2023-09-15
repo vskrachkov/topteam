@@ -23,7 +23,7 @@ class Player:
 
     def rating(self) -> int:
         return (
-            self.defense + self.offense + self.team_play + self.physical + self.vision
+            self.defense + self.offense + self.team_play + self.physical + self.vision + self.mentality
         )
 
 
@@ -60,6 +60,9 @@ class Team:
     def add_pair(self, p: PlayersPair) -> None:
         self.add_player(p.first)
         self.add_player(p.second)
+
+    def get_all_players(self) -> list[Player]:
+        return self.starting_lineup + self.substitutes
 
     def rating(self) -> int:
         return sum([p.rating() for p in (self.starting_lineup + self.substitutes)])

@@ -88,5 +88,4 @@ class HappinessFunction:
 
     def calculate_score(self, teams: list[Team]) -> float:
         result = sum([hf(teams) for hf in self.happiness_factors])
-        print(f"happiness: {result}")
         return result
