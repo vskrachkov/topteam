@@ -1,3 +1,4 @@
+from topteam.friends_repository import FriendsRepository
 from topteam.happiness_function import (
     HappinessFunction,
     DiffByDefenseFactor,
@@ -43,6 +44,17 @@ players_repository.save(Player('544489bf-2479-4be6-b3a2-0401815ae678', 'Chi One 
 players_repository.save(Player('424489bf-2479-4be6-b3a2-0401815ae678', 'Andriy (Dmytro)', defense=3, offense=4, team_play=3, physical=2, vision=3, mentality=3))
 players_repository.save(Player('314489bf-2479-4be6-b3a2-0401815ae678', 'Oleksandr (Artur)', defense=5, offense=4, team_play=5, physical=3, vision=5, mentality=2))
 players_repository.save(Player('111189b0-2479-4be6-b3a2-0401815ae678', 'Dmytro Lukin', defense=3, offense=3, team_play=3, physical=3, vision=3, mentality=3))
+
+
+friends_repository = FriendsRepository()
+friends_repository.add_friends([
+    players_repository.find_by_id("d021718e-33c0-4712-b4b4-2211d75edf77"),
+    players_repository.find_by_id("4b249bc6-a0c0-4c43-b501-222fc3f09547"),
+    players_repository.find_by_id("6be22f3f-30a7-4afc-995c-f80a23c40b5a"),
+    players_repository.find_by_id("a2b04543-31b8-4d43-bf75-45f8b21f4eb5"),
+    players_repository.find_by_id("424489bf-2479-4be6-b3a2-0401815ae678"),
+    players_repository.find_by_id("314489bf-2479-4be6-b3a2-0401815ae678"),
+])
 
 
 rules_repository = RulesRepository()

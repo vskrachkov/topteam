@@ -9,6 +9,13 @@ packages = [{include = "topteam", from = "src"}]
 [tool.poetry.dependencies]
 python = "^3.11"
 
+[tool.poetry.group.dev.dependencies]
+black = "^23.9.1"
+
+[tool.black]
+target-version = ["py311"]
+line-length = 100
+color = true
 
 [build-system]
 requires = ["poetry-core"]
